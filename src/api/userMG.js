@@ -67,10 +67,11 @@ export const RoleRightSave = (params) => { return req("post", "/api/RoleRight/sa
  **/
 // 商品管理-获取商品列表
 export const deptList = (params) => { return req("post", "/api/goods/list", params) };
-
-// 公司管理-保存（添加编辑）
+// 商品管理-新增商品
+export const goodsAdd = (params) => { return req("post", "/api/goods/add", params) };
+// 商品管理-新增商品
 export const deptSave = (params) => { return req("post", "/api/Dept/save", params) };
-// 公司管理-删除公司
+// 商品管理-删除商品
 export const deptDelete = (params) => { return axios.get("/api/goods/delete?id=" + params + "&token=" + localStorage.getItem('logintoken')).then(res => res.data) };
 
 /**
@@ -109,3 +110,8 @@ export const ermissionDelete = (params) => { return axios.delete("/api/Permissio
 export const roleDropDown = () => { return axios.get("/api/Role/dropDown/all?&token=" + localStorage.getItem('logintoken')).then(res => res.data) };
 // 权限管理-配置权限
 export const RolePermission = (params) => { return req("post", "/api/RolePermission/save", params) };
+
+
+
+export const uploadFile = (params) => { return req("post", "/api/file/upload", params) };
+

@@ -18,12 +18,13 @@
       </el-form-item>
       <el-form-item>
         <el-button size="small" type="primary" icon="el-icon-search" @click="search">搜索</el-button>
-        <el-button size="small" type="primary" icon="el-icon-plus" @click="handleEdit()">添加</el-button>
+        <el-button size="small" type="primary" icon="el-icon-plus" @click="toGoodsAdd">添加</el-button>
+        <el-button size="small" type="danger" icon="el-icon-delete"  @click="deleteBatch('goodsTable')">批量删除</el-button>
       </el-form-item>
     </el-form>
     <!--列表-->
-    <el-table size="small" :data="listData" highlight-current-row v-loading="loading" border
-              element-loading-text="拼命加载中" style="width: 100%;">
+    <el-table :model="goodsTable" size="small" :data="listData" highlight-current-row v-loading="loading" border
+              element-loading-text="拼命加载中" style="width: 100%;"  row-selection="rowSelection">
       <el-table-column align="center" type="selection" width="60">
       </el-table-column>
       <el-table-column align="center" label="图片" min-width="80">
@@ -150,6 +151,10 @@ export default {
         currentPage: 1,
         pageSize: 10,
         total: 10
+      },
+      rowSelection: {
+        type: 'radio', // 你可以根据需要选择单选或多选
+        // 其他行选择属性...
       }
     }
   },
@@ -295,6 +300,30 @@ export default {
     // 关闭编辑、增加弹出框
     closeDialog() {
       this.editFormVisible = false
+    },
+    // 新增商品 ，跳转到新增页面
+    toGoodsAdd() {
+      this.$router.push({ path: '/goods/GoodsAdd' })
+
+    },
+    deleteBatch() {
+      debugger
+      const selectedRows = this.$refs.table.getSelections(); // 获取选中的行数据
+
+      if (selectedRows.length > 0) {
+        // 调用后端接口进行删除操作
+        // 你可以根据实际情况调整请求参数和请求方法等细节...
+        // 这里只是一个示例，你需要根据你的后端接口进行相应的调整...
+        axios.delete('/api/data', { data: selectedRows })
+          .then(response => {
+            // 处理删除成功的逻辑...
+          })
+          .catch(error => {
+            // 处理删除失败的逻辑...
+          });
+      } else {
+        // 没有选中任何行时的处理逻辑...
+      }
     }
   }
 }
