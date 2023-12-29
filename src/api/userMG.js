@@ -63,14 +63,28 @@ export const RoleRightTree = (params) => { return axios.get("/api/RoleRight/tree
 export const RoleRightSave = (params) => { return req("post", "/api/RoleRight/save", params) };
 
 /**
- * 公司管理
+ * 商品管理
  **/
-// 公司管理-获取公司列表
+// 商品管理-获取商品列表
 export const deptList = (params) => { return req("post", "/api/goods/list", params) };
+
 // 公司管理-保存（添加编辑）
 export const deptSave = (params) => { return req("post", "/api/Dept/save", params) };
 // 公司管理-删除公司
 export const deptDelete = (params) => { return axios.get("/api/goods/delete?id=" + params + "&token=" + localStorage.getItem('logintoken')).then(res => res.data) };
+
+/**
+ * 商品分类管理
+ */
+
+// 商品分类-获取列表
+export const categoryList = (params) => { return req("post", "/api/goods/category/list", params) };
+// 商品分类-获取列表
+export const categoryDeleteById = (params) => { return axios.get("/api/goods/category/delete?id=" + params).then(res => res.data) };
+// 商品分类-获取列表
+export const categoryDeleteAll = (params) => { return axios.get("/api/goods/category/deleteAll?shopid=" + params).then(res => res.data) };
+// 新增或者修改
+export const categorySaveOrUpdate = (params) => { return req("post", "/api/goods/category/saveOrUpdate", params) };
 
 /**
  * 系统环境变量

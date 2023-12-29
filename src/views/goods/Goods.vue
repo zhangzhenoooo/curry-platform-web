@@ -1,6 +1,6 @@
 /**
- * 基础菜单 商品管理
- */
+* 基础菜单 商品管理
+*/
 <template>
   <div>
     <!-- 面包屑导航 -->
@@ -22,14 +22,15 @@
       </el-form-item>
     </el-form>
     <!--列表-->
-    <el-table size="small" :data="listData" highlight-current-row v-loading="loading" border element-loading-text="拼命加载中" style="width: 100%;">
+    <el-table size="small" :data="listData" highlight-current-row v-loading="loading" border
+              element-loading-text="拼命加载中" style="width: 100%;">
       <el-table-column align="center" type="selection" width="60">
       </el-table-column>
       <el-table-column align="center" label="图片" min-width="80">
         <template slot-scope="scope">
           <img width="80px" :src="scope.row.pic" alt="图片">
         </template>
-       </el-table-column>
+      </el-table-column>
       <el-table-column sortable prop="id" label="编号|条码" width="80">
       </el-table-column>
       <el-table-column sortable prop="categoryName" label="门店|分类" width="80">
@@ -37,12 +38,45 @@
       <el-table-column sortable prop="name" label="名称" width="100">
       </el-table-column>
       <el-table-column align="center" label="库存状态" min-width="100">
+        <template slot-scope="scope">
+          <div>
+            999863 <br>
+            已审核 <br>
+            上架 <br>
+            默认展示 <br>
+          </div>
+        </template>
       </el-table-column>
       <el-table-column align="center" label="价格" min-width="100">
+        <template slot-scope="scope">
+          <div>
+            商品原价： {{ scope.row.originalPrice }} <br>
+            最低价格： {{ scope.row.minPrice }} <br>
+            砍价底价： {{ scope.row.kanjiaPrice }}<br>
+            团购价格： {{ scope.row.pingtuanPrice }}
+          </div>
+        </template>
+
       </el-table-column>
       <el-table-column align="center" label="统计数据" min-width="100">
+        <template slot-scope="scope">
+          <div>
+            浏览量 : {{ scope.row.views }}<br>
+            收藏量 : {{ scope.row.usefulNumber }}<br>
+            订单数 : {{ scope.row.numberOrders }}<br>
+            销售数 : {{ scope.row.numberSells }}<br>
+            满意度 : {{ scope.row.numberGoodReputation }}
+          </div>
+        </template>
       </el-table-column>
       <el-table-column align="center" label="满意度" min-width="100">
+        <template slot-scope="scope">
+          <div>
+            <el-p style="color: green"> 赞 : {{ scope.row.usefulNumber }}</el-p>
+            <br>
+            <el-p style="color: red"> 踩 : {{ scope.row.unusefulNumber }}</el-p>
+          </div>
+        </template>
       </el-table-column>
       <el-table-column align="center" label="操作" min-width="100">
         <template slot-scope="scope">
@@ -65,15 +99,17 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button size="small" @click="closeDialog">取消</el-button>
-        <el-button size="small" type="primary" :loading="loading" class="title" @click="submitForm('editForm')">保存</el-button>
+        <el-button size="small" type="primary" :loading="loading" class="title" @click="submitForm('editForm')">保存
+        </el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { deptList, deptSave, deptDelete } from '../../api/userMG'
+import {deptList, deptSave, deptDelete} from '../../api/userMG'
 import Pagination from '../../components/Pagination'
+
 export default {
   data() {
     return {
@@ -91,9 +127,9 @@ export default {
       // rules表单验证
       rules: {
         deptName: [
-          { required: true, message: '请输入部门名称', trigger: 'blur' }
+          {required: true, message: '请输入部门名称', trigger: 'blur'}
         ],
-        deptNo: [{ required: true, message: '请输入部门代码', trigger: 'blur' }]
+        deptNo: [{required: true, message: '请输入部门代码', trigger: 'blur'}]
       },
       formInline: {
         page: 1,
@@ -144,26 +180,26 @@ export default {
       /***
        * 调用接口，注释上面模拟数据 取消下面注释
        */
-        deptList(parameter)
-          .then(res => {
-            this.loading = false
-            if (res.success == false) {
-              this.$message({
-               type: 'info',
-               message: res.msg
-              })
-           } else {
-              this.listData = res.data.list
-             // 分页赋值
-              this.pageparm.currentPage = res.data.pageNum
-              this.pageparm.pageSize = res.data.pageSize
-              this.pageparm.total = res.data.total
-           }
-         })
-          .catch(err => {
-            this.loading = false
-            this.$message.error('菜单加载失败，请稍后再试！')
-         })
+      deptList(parameter)
+        .then(res => {
+          this.loading = false
+          if (res.success == false) {
+            this.$message({
+              type: 'info',
+              message: res.msg
+            })
+          } else {
+            this.listData = res.data.list
+            // 分页赋值
+            this.pageparm.currentPage = res.data.pageNum
+            this.pageparm.pageSize = res.data.pageSize
+            this.pageparm.total = res.data.total
+          }
+        })
+        .catch(err => {
+          this.loading = false
+          this.$message.error('菜单加载失败，请稍后再试！')
+        })
     },
     // 分页插件事件
     callFather(parm) {
@@ -176,7 +212,7 @@ export default {
       this.getdata(this.formInline)
     },
     //显示编辑界面
-    handleEdit: function(index, row) {
+    handleEdit: function (index, row) {
       this.editFormVisible = true
       if (row != undefined && row != 'undefined') {
         this.title = '修改'
@@ -268,6 +304,7 @@ export default {
 .user-search {
   margin-top: 20px;
 }
+
 .userRole {
   width: 100%;
 }

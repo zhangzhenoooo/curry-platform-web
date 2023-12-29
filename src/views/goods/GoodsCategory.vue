@@ -1,6 +1,6 @@
 /**
- * 基础菜单 商品管理
- */
+* 基础菜单 商品管理
+*/
 <template>
   <div>
     <!-- 面包屑导航 -->
@@ -11,43 +11,39 @@
     <!-- 搜索筛选 -->
     <el-form :inline="true" :model="formInline" class="user-search">
       <el-form-item label="搜索：">
-        <el-input size="small" v-model="formInline.goodsName" placeholder="输入商品名称"></el-input>
-      </el-form-item>
-      <el-form-item label="">
-        <el-input size="small" v-model="formInline.categoryName" placeholder="输入类别名称"></el-input>
+        <el-input size="small" v-model="formInline.categoryName" placeholder="输入商品分类名称"></el-input>
       </el-form-item>
       <el-form-item>
         <el-button size="small" type="primary" icon="el-icon-search" @click="search">搜索</el-button>
-        <el-button size="small" type="primary" icon="el-icon-plus" @click="handleEdit()">添加</el-button>
+        <el-button size="small" type="success" icon="el-icon-plus" @click="handleEdit()">添加</el-button>
+        <el-button size="small" type="danger" icon="el-icon-plus" @click="deleteAll()">删除所有类目</el-button>
+
       </el-form-item>
     </el-form>
     <!--列表-->
-    <el-table size="small" :data="listData" highlight-current-row v-loading="loading" border element-loading-text="拼命加载中" style="width: 100%;">
+    <el-table size="small" :data="listData" highlight-current-row v-loading="loading" border
+              element-loading-text="拼命加载中" style="width: 100%;">
       <el-table-column align="center" type="selection" width="60">
       </el-table-column>
-      <el-table-column align="center" label="图片" min-width="80">
-        <template slot-scope="scope">
-          <img width="80px" :src="scope.row.pic" alt="图片">
-        </template>
-       </el-table-column>
-      <el-table-column sortable prop="id" label="编号|条码" width="80">
+      <el-table-column sortable align="center" prop="id" label="编号" min-width="30">
+
       </el-table-column>
-      <el-table-column sortable prop="categoryName" label="门店|分类" width="80">
+      <el-table-column sortable align="center" prop="name" label="名称" width="200">
       </el-table-column>
-      <el-table-column sortable prop="name" label="名称" width="100">
+      <el-table-column align="center" label="图片" width="200">
+        -
       </el-table-column>
-      <el-table-column align="center" label="库存状态" min-width="100">
+      <el-table-column align="center" label="图片" width="200">
+        -
       </el-table-column>
-      <el-table-column align="center" label="价格" min-width="100">
+      <el-table-column align="center" label="状态" min-width="60">
+        <el-button size="small" type="success" >正常</el-button>
       </el-table-column>
-      <el-table-column align="center" label="统计数据" min-width="100">
-      </el-table-column>
-      <el-table-column align="center" label="满意度" min-width="100">
-      </el-table-column>
+
       <el-table-column align="center" label="操作" min-width="100">
         <template slot-scope="scope">
           <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-          <el-button size="mini" type="danger" @click="deleteUser(scope.$index, scope.row)">删除</el-button>
+          <el-button size="mini" type="danger" @click="deleteById(scope.$index, scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -56,24 +52,26 @@
     <!-- 编辑界面 -->
     <el-dialog :title="title" :visible.sync="editFormVisible" width="30%" @click="closeDialog">
       <el-form label-width="120px" :model="editForm" :rules="rules" ref="editForm">
-        <el-form-item label="部门名称" prop="deptName">
-          <el-input size="small" v-model="editForm.deptName" auto-complete="off" placeholder="请输入部门名称"></el-input>
+        <el-form-item label="分类编码" prop="id">
+          <el-input readonly size="small" v-model="editForm.id" auto-complete="off"></el-input>
         </el-form-item>
-        <el-form-item label="部门代码" prop="deptNo">
-          <el-input size="small" v-model="editForm.deptNo" auto-complete="off" placeholder="请输入部门代码"></el-input>
+        <el-form-item label="分类名称" prop="name">
+          <el-input size="small" v-model="editForm.name" auto-complete="off" placeholder="请输入分类名称"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button size="small" @click="closeDialog">取消</el-button>
-        <el-button size="small" type="primary" :loading="loading" class="title" @click="submitForm('editForm')">保存</el-button>
+        <el-button size="small" type="primary" :loading="loading" class="title" @click="submitForm('editForm')">保存
+        </el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { deptList, deptSave, deptDelete } from '../../api/userMG'
+import {categoryList, categoryDeleteById, categoryDeleteAll, categorySaveOrUpdate} from '../../api/userMG'
 import Pagination from '../../components/Pagination'
+
 export default {
   data() {
     return {
@@ -83,26 +81,28 @@ export default {
       editFormVisible: false, //控制编辑页面显示与隐藏
       title: '添加',
       editForm: {
-        deptId: '',
-        deptName: '',
+        id: '',
+        name: '',
         deptNo: '',
+        shopid: 0,
         token: localStorage.getItem('logintoken')
       },
       // rules表单验证
       rules: {
         deptName: [
-          { required: true, message: '请输入部门名称', trigger: 'blur' }
+          {required: true, message: '请输入分类名称', trigger: 'blur'}
         ],
-        deptNo: [{ required: true, message: '请输入部门代码', trigger: 'blur' }]
+        deptNo: [{required: true, message: '请输入分类代码', trigger: 'blur'}]
       },
       formInline: {
         page: 1,
         pageSize: 10,
+        shopid: 0,
         varLable: '',
         varName: '',
         token: localStorage.getItem('logintoken')
       },
-      // 删除部门
+      // 删除分类
       seletedata: {
         ids: '',
         token: localStorage.getItem('logintoken')
@@ -139,31 +139,29 @@ export default {
     // 获取公司列表
     getdata(parameter) {
       this.loading = true
-
-
       /***
        * 调用接口，注释上面模拟数据 取消下面注释
        */
-        deptList(parameter)
-          .then(res => {
-            this.loading = false
-            if (res.success == false) {
-              this.$message({
-               type: 'info',
-               message: res.msg
-              })
-           } else {
-              this.listData = res.data.list
-             // 分页赋值
-              this.pageparm.currentPage = res.data.pageNum
-              this.pageparm.pageSize = res.data.pageSize
-              this.pageparm.total = res.data.total
-           }
-         })
-          .catch(err => {
-            this.loading = false
-            this.$message.error('菜单加载失败，请稍后再试！')
-         })
+      categoryList(parameter)
+        .then(res => {
+          this.loading = false
+          if (res.code != 0) {
+            this.$message({
+              type: 'info',
+              message: res.msg
+            })
+          } else {
+            this.listData = res.data.list
+            // 分页赋值
+            this.pageparm.currentPage = res.data.pageNum
+            this.pageparm.pageSize = res.data.pageSize
+            this.pageparm.total = res.data.total
+          }
+        })
+        .catch(err => {
+          this.loading = false
+          this.$message.error('菜单加载失败，请稍后再试！')
+        })
     },
     // 分页插件事件
     callFather(parm) {
@@ -176,17 +174,17 @@ export default {
       this.getdata(this.formInline)
     },
     //显示编辑界面
-    handleEdit: function(index, row) {
+    handleEdit: function (index, row) {
       this.editFormVisible = true
       if (row != undefined && row != 'undefined') {
         this.title = '修改'
-        this.editForm.deptId = row.deptId
-        this.editForm.deptName = row.deptName
+        this.editForm.id = row.id
+        this.editForm.name = row.name
         this.editForm.deptNo = row.deptNo
       } else {
         this.title = '添加'
-        this.editForm.deptId = ''
-        this.editForm.deptName = ''
+        this.editForm.id = ''
+        this.editForm.name = ''
         this.editForm.deptNo = ''
       }
     },
@@ -194,15 +192,15 @@ export default {
     submitForm(editData) {
       this.$refs[editData].validate(valid => {
         if (valid) {
-          deptSave(this.editForm)
+          categorySaveOrUpdate(this.editForm)
             .then(res => {
               this.editFormVisible = false
               this.loading = false
-              if (res.success) {
+              if (res.code == 0) {
                 this.getdata(this.formInline)
                 this.$message({
                   type: 'success',
-                  message: '商品保存成功！'
+                  message: '商品分类保存成功！'
                 })
               } else {
                 this.$message({
@@ -214,7 +212,7 @@ export default {
             .catch(err => {
               this.editFormVisible = false
               this.loading = false
-              this.$message.error('公司保存失败，请稍后再试！')
+              this.$message.error('商品分类失败，请稍后再试！')
             })
         } else {
           return false
@@ -222,19 +220,20 @@ export default {
       })
     },
     // 删除公司
-    deleteUser(index, row) {
+
+    deleteById(index, row) {
       this.$confirm('确定要删除吗?', '信息', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       })
         .then(() => {
-          deptDelete(row.id)
+          categoryDeleteById(row.id)
             .then(res => {
               if (res.code == 0) {
                 this.$message({
                   type: 'success',
-                  message: '商品已删除!'
+                  message: '商品分类已删除!'
                 })
                 this.getdata(this.formInline)
               } else {
@@ -246,7 +245,7 @@ export default {
             })
             .catch(err => {
               this.loading = false
-              this.$message.error('商品删除失败，请稍后再试！')
+              this.$message.error('商品分类删除失败，请稍后再试！')
             })
         })
         .catch(() => {
@@ -268,6 +267,7 @@ export default {
 .user-search {
   margin-top: 20px;
 }
+
 .userRole {
   width: 100%;
 }
