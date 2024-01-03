@@ -16,17 +16,16 @@
       <el-form-item>
         <el-button size="small" type="primary" icon="el-icon-search" @click="search">搜索</el-button>
         <el-button size="small" type="success" icon="el-icon-plus" @click="handleEdit()">添加</el-button>
-        <el-button size="small" type="danger" icon="el-icon-plus" @click="deleteAll()">删除所有类目</el-button>
+        <el-button size="small" type="danger" icon="el-icon-plus" @click="deleteBatch()">批量删除</el-button>
 
       </el-form-item>
     </el-form>
     <!--列表-->
     <el-table size="small" :data="listData" highlight-current-row v-loading="loading" border
-              element-loading-text="拼命加载中" style="width: 100%;">
+              element-loading-text="拼命加载中" style="width: 100%;"  @select="handelSelectTable">
       <el-table-column align="center" type="selection" width="60">
       </el-table-column>
       <el-table-column sortable align="center" prop="id" label="编号" min-width="30">
-
       </el-table-column>
       <el-table-column sortable align="center" prop="name" label="名称" width="200">
       </el-table-column>
@@ -69,7 +68,7 @@
 </template>
 
 <script>
-import {categoryList, categoryDeleteById, categoryDeleteAll, categorySaveOrUpdate} from '../../api/userMG'
+import {categoryList, categoryDeleteById, categoryDeleteBatch, categorySaveOrUpdate} from '../../api/userMG'
 import Pagination from '../../components/Pagination'
 
 export default {
@@ -114,7 +113,8 @@ export default {
         currentPage: 1,
         pageSize: 10,
         total: 10
-      }
+      },
+      tableSelectIds: []
     }
   },
   // 注册组件
@@ -258,7 +258,49 @@ export default {
     // 关闭编辑、增加弹出框
     closeDialog() {
       this.editFormVisible = false
-    }
+    },
+    handelSelectTable(selection, row) {
+      this.tableSelectIds = [];
+      selection.forEach(key => {
+
+        this.tableSelectIds.push(key.id)
+      })
+    },deleteBatch() {
+      this.$confirm('确定要删除吗?', '信息', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+
+          const params = { "ids": this.tableSelectIds };
+          console.info(params)
+          categoryDeleteBatch(params).then(res => {
+            if (res.code == 0) {
+              this.$message({
+                type: 'success',
+                message: '已删除!'
+              })
+              this.getdata(this.formInline)
+            }else {
+              this.$message({
+                type: 'info',
+                message: res.msg
+              })
+            }
+          }).catch(error => {
+            this.loading = false
+            this.$message.error('删除失败，请稍后再试！')
+          })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+
+    },
   }
 }
 </script>

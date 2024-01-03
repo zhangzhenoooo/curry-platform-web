@@ -14,6 +14,8 @@ import Goods from '@/views/goods/Goods';
 // 商品分类
 import GoodsCategory from '@/views/goods/GoodsCategory';
 
+// 商品管理-规格尺寸
+import GoodsProperty from '@/views/goods/GoodsProperty';
 // 新增商品
 import GoodsAdd from '@/views/goods/GoodsAdd';
 
@@ -103,6 +105,14 @@ export default new Router({
         name: '新增商品',
         hidden: true,
         component: GoodsAdd,
+        meta: {
+          requireAuth: true
+        }
+      },{
+        path: '/goods/GoodsProperty',
+        name: '规格尺寸',
+        hidden: true,
+        component: GoodsProperty,
         meta: {
           requireAuth: true
         }

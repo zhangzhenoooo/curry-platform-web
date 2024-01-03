@@ -58,6 +58,13 @@ export default {
               hasThird: 'N',
               url: 'goods/Goods',
               menus: null
+            }, {
+              menuid: 4,
+              icon: 'icon-cat-skuQuery',
+              menuname: '规格尺寸',
+              hasThird: 'N',
+              url: 'goods/GoodsProperty',
+              menus: null
             }
           ]
         },

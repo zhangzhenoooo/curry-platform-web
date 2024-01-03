@@ -19,12 +19,13 @@
       <el-form-item>
         <el-button size="small" type="primary" icon="el-icon-search" @click="search">搜索</el-button>
         <el-button size="small" type="primary" icon="el-icon-plus" @click="toGoodsAdd">添加</el-button>
-        <el-button size="small" type="danger" icon="el-icon-delete"  @click="deleteBatch('goodsTable')">批量删除</el-button>
+        <el-button size="small" type="danger" icon="el-icon-delete" @click="deleteBatch()">批量删除</el-button>
       </el-form-item>
     </el-form>
     <!--列表-->
     <el-table :model="goodsTable" size="small" :data="listData" highlight-current-row v-loading="loading" border
-              element-loading-text="拼命加载中" style="width: 100%;"  row-selection="rowSelection">
+              element-loading-text="拼命加载中" style="width: 100%;" row-selection="rowSelection"
+              @select="handelSelectTable">
       <el-table-column align="center" type="selection" width="60">
       </el-table-column>
       <el-table-column align="center" label="图片" min-width="80">
@@ -89,6 +90,7 @@
     <!-- 分页组件 -->
     <Pagination v-bind:child-msg="pageparm" @callFather="callFather"></Pagination>
     <!-- 编辑界面 -->
+
     <el-dialog :title="title" :visible.sync="editFormVisible" width="30%" @click="closeDialog">
       <el-form label-width="120px" :model="editForm" :rules="rules" ref="editForm">
         <el-form-item label="部门名称" prop="deptName">
@@ -108,7 +110,7 @@
 </template>
 
 <script>
-import {deptList, deptSave, deptDelete} from '../../api/userMG'
+import {deptList, deptSave, deptDelete, goodsDeleteBatch} from '../../api/userMG'
 import Pagination from '../../components/Pagination'
 
 export default {
@@ -152,10 +154,7 @@ export default {
         pageSize: 10,
         total: 10
       },
-      rowSelection: {
-        type: 'radio', // 你可以根据需要选择单选或多选
-        // 其他行选择属性...
-      }
+      tableSelectIds: []
     }
   },
   // 注册组件
@@ -197,7 +196,6 @@ export default {
             this.listData = res.data.list
             // 分页赋值
             this.pageparm.currentPage = res.data.pageNum
-            this.pageparm.pageSize = res.data.pageSize
             this.pageparm.total = res.data.total
           }
         })
@@ -303,27 +301,51 @@ export default {
     },
     // 新增商品 ，跳转到新增页面
     toGoodsAdd() {
-      this.$router.push({ path: '/goods/GoodsAdd' })
+      this.$router.push({path: '/goods/GoodsAdd'})
 
     },
     deleteBatch() {
-      debugger
-      const selectedRows = this.$refs.table.getSelections(); // 获取选中的行数据
+      this.$confirm('确定要删除吗?', '信息', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
 
-      if (selectedRows.length > 0) {
-        // 调用后端接口进行删除操作
-        // 你可以根据实际情况调整请求参数和请求方法等细节...
-        // 这里只是一个示例，你需要根据你的后端接口进行相应的调整...
-        axios.delete('/api/data', { data: selectedRows })
-          .then(response => {
-            // 处理删除成功的逻辑...
+          const params = { "ids": this.tableSelectIds };
+          console.info(params)
+          goodsDeleteBatch(params).then(res => {
+            if (res.code == 0) {
+              this.$message({
+                type: 'success',
+                message: '商品已删除!'
+              })
+              this.getdata(this.formInline)
+            }else {
+              this.$message({
+                type: 'info',
+                message: res.msg
+              })
+            }
+          }).catch(error => {
+            this.loading = false
+            this.$message.error('商品删除失败，请稍后再试！')
           })
-          .catch(error => {
-            // 处理删除失败的逻辑...
-          });
-      } else {
-        // 没有选中任何行时的处理逻辑...
-      }
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+
+    },
+    handelSelectTable(selection, row) {
+      this.tableSelectIds = [];
+      selection.forEach(key => {
+
+        this.tableSelectIds.push(key.id)
+      })
     }
   }
 }

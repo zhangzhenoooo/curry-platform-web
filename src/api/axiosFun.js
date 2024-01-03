@@ -51,8 +51,25 @@ const req = (method, url, params) => {
         ]
     }).then(res => res.data);
 };
-
+// 通用公用方法
+const doPostJSON = ( url, params) => {
+  return axios({
+    method: 'post',
+    url: url,
+    data: JSON.stringify(params),
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+    .then(response => {
+      return response.data
+    })
+    .catch(error => {
+      console.error(error);
+    });
+};
 export {
     loginreq,
-    req
+    req,
+  doPostJSON
 }

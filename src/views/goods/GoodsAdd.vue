@@ -18,95 +18,94 @@
       <el-col :span="18">
 
         <el-form ref="form" :model="form" label-width="200px" :rules="rules">
-          <el-form-item label="所属门店" prop="shopId">
+          <el-form-item label="所属门店:" prop="shopId">
             <el-select size="small" v-model="form.shopId" placeholder="请选择" class="selectw">
               <el-option v-for="parm in shopMenu" :key="parm.id" :label="parm.name" :value="parm.id"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="商品分类" prop="categoryId">
+          <el-form-item label="商品分类:" prop="categoryId">
             <el-select size="small" v-model="form.categoryId" placeholder="请选择..." class="selectw">
               <el-option v-for="parm in goodsCategoryMenu" :key="parm.id" :label="parm.name"
                          :value="parm.id"></el-option>
             </el-select>
           </el-form-item>
 
-          <el-form-item label="商品条码" prop="moduleName">
+          <el-form-item label="商品条码:" prop="moduleName">
             <el-input size="small" v-model="form.moduleName"></el-input>
           </el-form-item>
 
-          <el-form-item label="商品名称" prop="name">
+          <el-form-item label="商品名称:" prop="name">
             <el-input size="small" v-model="form.name"></el-input>
           </el-form-item>
-          <el-form-item label="别名" prop="subName">
+          <el-form-item label="别名:" prop="subName">
             <el-input size="small" v-model="form.subName"></el-input>
           </el-form-item>
-          <el-form-item label="排序" prop="paixu">
+          <el-form-item label="排序:" prop="paixu">
             <el-input size="small" v-model="form.paixu"></el-input>
           </el-form-item>
-          <el-form-item label="推荐" prop="recommendStatus">
+          <el-form-item label="推荐:" prop="recommendStatus">
             <el-radio v-model="form.recommendStatus" label="0">推荐</el-radio>
             <el-radio v-model="form.recommendStatus" label="1">不推荐</el-radio>
 
           </el-form-item>
-          <el-form-item label="是否展示" prop="hidden">
+          <el-form-item label="是否展示:" prop="hidden">
             <el-radio v-model="form.hidden" label="0">正常展示</el-radio>
             <el-radio v-model="form.hidden" label="1">默认隐藏，不在前端展示</el-radio>
           </el-form-item>
-          <el-form-item label="是否售后" prop="afterSale">
-
-            <input type="checkbox" v-model="form.afterSale" value="0"> 仅退款
-            <input type="checkbox" v-model="form.afterSale" value="1"> 退货退款
-            <input type="checkbox" v-model="form.afterSale" value="2"> 换货 <span style="color: red"> 都不勾选代表不支持售后</span>
+          <el-form-item label="是否售后:" prop="afterSale">
+            <el-radio v-model="form.afterSale" label="0">否</el-radio>
+            <el-radio v-model="form.afterSale" label="1">支持</el-radio>
           </el-form-item>
 
-          <el-form-item label="状态" prop="status">
+          <el-form-item label="状态:" prop="status">
             <el-radio v-model="form.status" label="0">上架</el-radio>
             <el-radio v-model="form.status" label="1">下架</el-radio>
           </el-form-item>
 
-          <el-form-item label="展示图片" prop="pic">
-            <el-input size="small" type="file" v-model="file" @change="uploadGoodsFile"></el-input>
+          <el-form-item label="展示图片:" prop="pic">
+            <el-input size="small" style="visibility: hidden;"  v-model="form.pic"></el-input>
+            <input size="small" type="file" @change="uploadGoodsFile"/>
           </el-form-item>
 
-          <el-form-item label="详细介绍" prop="content">
+          <el-form-item label="详细介绍:" prop="content">
             <el-input size="small" v-model="form.content"></el-input>
           </el-form-item>
 
-          <el-form-item label="单位" prop="unit">
+          <el-form-item label="单位:" prop="unit">
             <el-input size="small" v-model="form.unit"></el-input>
           </el-form-item>
 
 
-          <el-form-item label="市场价" prop="originalPrice">
+          <el-form-item label="市场价:" prop="originalPrice">
             <el-input size="small" v-model="form.originalPrice"></el-input>
           </el-form-item>
 
-          <el-form-item label="价格" prop="minPrice">
+          <el-form-item label="价格:" prop="minPrice">
             <el-input size="small" v-model="form.minPrice"></el-input>
           </el-form-item>
 
-          <el-form-item label="税率(单位：%)" prop="tax">
+          <el-form-item label="税率(单位：%):" prop="tax">
             <el-input size="small" v-model="form.tax"></el-input>
           </el-form-item>
 
-          <el-form-item label="需要积分" prop="minScore">
+          <el-form-item label="需要积分:" prop="minScore">
             <el-input size="small" v-model="form.minScore"></el-input>
           </el-form-item>
 
-          <el-form-item label="赠送积分" prop="gotScore">
+          <el-form-item label="赠送积分:" prop="gotScore">
             <el-input size="small" v-model="form.gotScore"></el-input>
           </el-form-item>
 
-          <el-form-item label="最少购买" prop="minBuyNumber">
+          <el-form-item label="最少购买:" prop="minBuyNumber">
             <el-input size="small" v-model="form.minBuyNumber"></el-input>
           </el-form-item>
 
-          <el-form-item label="库存" prop="stores">
+          <el-form-item label="库存:" prop="stores">
             <el-input size="small" v-model="form.stores"></el-input>
           </el-form-item>
 
 
-          <el-form-item label="预警库存水位线" prop="storeAlertNum">
+          <el-form-item label="预警库存水位线:" prop="storeAlertNum">
             <el-input size="small" v-model="form.storeAlertNum"></el-input>
           </el-form-item>
 
@@ -128,7 +127,8 @@ import {
   goodsAdd,
   ModuleGet,
   ModuleDelete
-} from '../../api/userMG'
+} from '../../api/userMG';
+import axios from 'axios';
 
 export default {
   data() {
@@ -151,15 +151,16 @@ export default {
         afterSale: '',
         status: 0,
         content: '',
-        unit: '',
+        unit: '份',
         originalPrice: 0,
         minPrice: 0,
         tax: 0,
         minScore: 0,
         gotScore: 0,
         minBuyNumber: 1,
-        stores: 0,
-        storeAlertNum: 0
+        stores: 1000,
+        storeAlertNum: 20,
+        pic: ''
       },
       // rules表单验证
       rules: {
@@ -179,8 +180,7 @@ export default {
       },
       status: [{required: true, message: '请选择状态', trigger: 'blur'}],
       shopMenu: [{"id": 0, "name": "震震私厨"}],
-      goodsCategoryMenu: [],
-      goodsFile: null
+      goodsCategoryMenu: []
     }
   },
   /**
@@ -193,7 +193,7 @@ export default {
     this.getmenu()
   },
 
-  emptyForm() {
+  emptyGoodsForm() {
     this.form = {
       shopId: 0,
       categoryId: '',
@@ -206,15 +206,16 @@ export default {
       afterSale: '',
       status: 0,
       content: '',
-      unit: '',
+      unit: '份',
       originalPrice: 0,
       minPrice: 0,
       tax: 0,
       minScore: 0,
       gotScore: 0,
       minBuyNumber: 1,
-      stores: 0,
-      storeAlertNum: 0
+      stores: 1000,
+      storeAlertNum: 20,
+      pic: ''
     }
   },
 
@@ -353,12 +354,10 @@ export default {
     saveModule(editData) {
       this.$refs[editData].validate(valid => {
         if (valid) {
+          debugger
           goodsAdd(this.form)
             .then(res => {
               this.$message.error('新增成功')
-              this.emptyForm()
-              this.getdata()
-              this.getmenu()
             })
             .catch(err => {
               this.$message.error('菜单管理列表保存失败，请稍后再试！')
@@ -367,6 +366,10 @@ export default {
           return false
         }
       })
+
+      this.emptyGoodsForm()
+      this.getdata()
+      this.getmenu()
     },
     // 删除菜单
     deleteModule() {
@@ -381,11 +384,19 @@ export default {
         })
     },
     uploadGoodsFile() {
-      this.file = event.target.files[0];
+      const goodsfile = event.target.files[0];
       const formData = new FormData();
-      formData.append('file', this.file);
-      debugger
+      formData.append('file', goodsfile);
       // 上传操作
+      axios.post("/api/file/upload", formData, {
+        headers: {'Content-Type': 'multipart/form-data'}
+      }).then(res => {
+        this.form.pic = res.data.data
+        debugger
+        console.log(res)
+      }).catch(error => {
+        console.error(error)
+      })
 
     }
   }
