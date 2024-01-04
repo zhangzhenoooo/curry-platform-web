@@ -94,7 +94,7 @@ export default {
         .then(res => {
           if (res.code == 0) {
             this.tableData = res.data;
-           } else {
+          } else {
             this.$message.error('系统异常，请稍后再试！')
           }
         }).catch(error => {
@@ -107,6 +107,8 @@ export default {
         .then(res => {
           if (res.code == 0) {
             this.labList = res.data;
+            const proptreyId = this.labList[this.currentProptreyId].id;
+            this.getPropertyByPropertyId(proptreyId)
           } else {
             this.$message.error('系统异常，请稍后再试！')
           }
@@ -128,7 +130,6 @@ export default {
           resolve();
         });
       });
-
       // 使用then方法处理promise的结果
       promise.then(() => {
         this.activeTab = tab.label; // 更新激活的标签页
