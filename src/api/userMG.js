@@ -166,6 +166,11 @@ export const goodsPropretyUpdate = (params) => {
 export const goodsPropretyDelete = (params) => {
   return req("get", "/api/goods/property/delete?id=" + params).then(res => res)
 };
+export const goodsPropretyTree = () => {
+  return req("get", "/api/goods/property/tree").then(res => res)
+};
+
+
 export const categoryDeleteBatch = (params) => {
   return doPostJSON( "/api/goods/category/deleteBatch", params)
 };
