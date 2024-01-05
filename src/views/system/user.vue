@@ -1,6 +1,6 @@
 /**
- * 系统管理 用户管理
- */
+* 系统管理 用户管理
+*/
 <template>
   <div>
     <!-- 面包屑导航 -->
@@ -25,34 +25,30 @@
       </el-form-item>
       <el-form-item>
         <el-button size="small" type="primary" icon="el-icon-search" @click="search">搜索</el-button>
-        <el-button size="small" type="primary" icon="el-icon-plus" @click="handleEdit()">添加</el-button>
-        <el-button size="small" type="primary" @click="handleunit()">部门设置</el-button>
       </el-form-item>
     </el-form>
     <!--列表-->
-    <el-table size="small" @selection-change="selectChange" :data="userData" highlight-current-row v-loading="loading" border element-loading-text="拼命加载中" style="width: 100%;">
-      <el-table-column align="center" type="selection" width="50">
+    <el-table size="small" @selection-change="selectChange" :data="userData" highlight-current-row v-loading="loading"
+              border element-loading-text="拼命加载中" style="width: 100%;">
+      <el-table-column align="center" type="index" width="50">
       </el-table-column>
-      <el-table-column align="center" sortable prop="deptName" label="公司" width="120">
+      <el-table-column align="center" sortable prop="userName" label="用户名称" width="120">
       </el-table-column>
-      <el-table-column align="center" sortable prop="userName" label="用户名" width="120">
+      <el-table-column align="center" sortable prop="nick" label="昵称" width="120">
       </el-table-column>
-      <el-table-column align="center" sortable prop="userRealName" label="姓名" width="120">
+      <el-table-column align="center" sortable prop="phone" label="手机号" width="120">
       </el-table-column>
-      <el-table-column align="center" sortable prop="userMobile" label="手机号" width="120">
+      <el-table-column align="center" sortable prop="status" label="状态" width="120">
       </el-table-column>
-      <el-table-column align="center" sortable prop="userSex" label="性别" min-width="50">
-      </el-table-column>
-      <el-table-column align="center" sortable prop="userEmail" label="邮件" min-width="120">
-      </el-table-column>
-      <el-table-column align="center" sortable prop="editTime" label="修改时间" min-width="120">
+      <el-table-column align="center" sortable prop="createTime" label="创建时间" min-width="120">
         <template slot-scope="scope">
-          <div>{{scope.row.editTime|timestampToTime}}</div>
+          <div>{{ scope.row.createTime|timestampToTime }}</div>
         </template>
       </el-table-column>
       <el-table-column align="center" sortable prop="isLock" label="状态" min-width="50">
         <template slot-scope="scope">
-          <el-switch v-model="scope.row.isLock=='N'?nshow:fshow" active-color="#13ce66" inactive-color="#ff4949" @change="editType(scope.$index, scope.row)">
+          <el-switch v-model="scope.row.isLock=='N'?nshow:fshow" active-color="#13ce66" inactive-color="#ff4949"
+                     @change="editType(scope.$index, scope.row)">
           </el-switch>
         </template>
       </el-table-column>
@@ -97,12 +93,14 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button size="small" @click='closeDialog("edit")'>取消</el-button>
-        <el-button size="small" type="primary" :loading="loading" class="title" @click="submitForm('editForm')">保存</el-button>
+        <el-button size="small" type="primary" :loading="loading" class="title" @click="submitForm('editForm')">保存
+        </el-button>
       </div>
     </el-dialog>
     <!-- 数据权限 -->
     <el-dialog title="数据权限" :visible.sync="dataAccessshow" width="30%" @click='closeDialog("perm")'>
-      <el-tree ref="tree" default-expand-all="" :data="UserDept" :props="defaultProps" :default-checked-keys="checkmenu" node-key="id" show-checkbox>
+      <el-tree ref="tree" default-expand-all="" :data="UserDept" :props="defaultProps" :default-checked-keys="checkmenu"
+               node-key="id" show-checkbox>
       </el-tree>
       <div slot="footer" class="dialog-footer">
         <el-button size="small" @click='closeDialog("perm")'>取消</el-button>
@@ -111,7 +109,8 @@
     </el-dialog>
     <!-- 所属单位 -->
     <el-dialog title="所属单位" :visible.sync="unitAccessshow" width="30%" @click='closeDialog("unit")'>
-      <el-tree ref="tree" default-expand-all="" :data="UserDept" :props="defaultProps" @check-change="handleClick" :default-checked-keys="checkmenu" node-key="id" show-checkbox check-strictly>
+      <el-tree ref="tree" default-expand-all="" :data="UserDept" :props="defaultProps" @check-change="handleClick"
+               :default-checked-keys="checkmenu" node-key="id" show-checkbox check-strictly>
       </el-tree>
       <div slot="footer" class="dialog-footer">
         <el-button size="small" @click='closeDialog("unit")'>取消</el-button>
@@ -137,6 +136,7 @@ import {
   UserChangeDept
 } from '../../api/userMG'
 import Pagination from '../../components/Pagination'
+
 export default {
   data() {
     return {
@@ -169,14 +169,14 @@ export default {
       // rules表单验证
       rules: {
         userName: [
-          { required: true, message: '请输入用户名', trigger: 'blur' }
+          {required: true, message: '请输入用户名', trigger: 'blur'}
         ],
         userRealName: [
-          { required: true, message: '请输入姓名', trigger: 'blur' }
+          {required: true, message: '请输入姓名', trigger: 'blur'}
         ],
-        roleId: [{ required: true, message: '请选择角色', trigger: 'blur' }],
+        roleId: [{required: true, message: '请选择角色', trigger: 'blur'}],
         userMobile: [
-          { required: true, message: '请输入手机号', trigger: 'blur' },
+          {required: true, message: '请输入手机号', trigger: 'blur'},
           {
             pattern: /^1(3\d|47|5((?!4)\d)|7(0|1|[6-8])|8\d)\d{8,8}$/,
             required: true,
@@ -185,7 +185,7 @@ export default {
           }
         ],
         userEmail: [
-          { required: true, message: '请输入邮箱', trigger: 'blur' },
+          {required: true, message: '请输入邮箱', trigger: 'blur'},
           {
             pattern: /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/,
             required: true,
@@ -193,7 +193,7 @@ export default {
             trigger: 'blur'
           }
         ],
-        userSex: [{ required: true, message: '请选择性别', trigger: 'blur' }]
+        userSex: [{required: true, message: '请选择性别', trigger: 'blur'}]
       },
       // 删除用户
       seletedata: {
@@ -212,7 +212,7 @@ export default {
       // 请求数据参数
       formInline: {
         page: 1,
-        limit: 10,
+        pageSize: 10,
         deptId: '',
         userName: '',
         userMobile: '',
@@ -262,221 +262,22 @@ export default {
     // 获取数据方法
     getdata(parameter) {
       this.loading = true
-      // 模拟数据开始
-      let res = {
-        code: 0,
-        msg: null,
-        count: 12,
-        data: [
-          {
-            addUser: '1',
-            editUser: '1',
-            addTime: null,
-            editTime: 1527411068000,
-            userId: 1,
-            systemNo: 'pmd',
-            userName: 'root',
-            userPassword: 'e10adc3949ba59abbe56e057f20f883e',
-            userRealName: '超级管理员',
-            userSex: '女',
-            userMobile: '138123456789',
-            userEmail: '111@qq.com',
-            isLock: 'N',
-            deptId: 1,
-            deptName: 'xxxx',
-            roleId: 1
-          },
-          {
-            addUser: '1',
-            editUser: '1',
-            addTime: null,
-            editTime: 1527410579000,
-            userId: 3,
-            systemNo: 'mc',
-            userName: 'zengzhuo',
-            userPassword: 'e10adc3949ba59abbe56e057f20f883e',
-            userRealName: '系统管理员',
-            userSex: 'M',
-            userMobile: '18616988966',
-            userEmail: '222@qq.com',
-            isLock: 'N',
-            deptId: 2,
-            deptName: 'xxxx',
-            roleId: 101
-          },
-          {
-            addUser: '1',
-            editUser: '4',
-            addTime: null,
-            editTime: 1527411586000,
-            userId: 4,
-            systemNo: 'ec',
-            userName: 'admin',
-            userPassword: '59ba8b7dda9ff79186311a5a9fa155ca',
-            userRealName: '超级管理员',
-            userSex: '女',
-            userMobile: '138123456789',
-            userEmail: 'huangxuekun@founder.com',
-            isLock: 'N',
-            deptId: 2,
-            deptName: 'xxxx',
-            roleId: 3
-          },
-          {
-            addUser: null,
-            editUser: null,
-            addTime: 1526275128000,
-            editTime: 1526284402000,
-            userId: 28,
-            systemNo: null,
-            userName: 'eee111',
-            userPassword: 'e10adc3949ba59abbe56e057f20f883e',
-            userRealName: '123111',
-            userSex: '男',
-            userMobile: '12354342345',
-            userEmail: '111232@qq.com',
-            isLock: 'N',
-            deptId: 4,
-            deptName: 'zxxxxx',
-            roleId: 1
-          },
-          {
-            addUser: null,
-            editUser: null,
-            addTime: 1526284533000,
-            editTime: 1526284533000,
-            userId: 37,
-            systemNo: null,
-            userName: 'ces',
-            userPassword: 'e10adc3949ba59abbe56e057f20f883e',
-            userRealName: 'sesfg',
-            userSex: '男',
-            userMobile: '12312312312',
-            userEmail: '122111111',
-            isLock: 'N',
-            deptId: 1,
-            deptName: 'xxxx',
-            roleId: 1
-          },
-          {
-            addUser: null,
-            editUser: null,
-            addTime: 1526285228000,
-            editTime: 1526285228000,
-            userId: 43,
-            systemNo: null,
-            userName: '22',
-            userPassword: 'e10adc3949ba59abbe56e057f20f883e',
-            userRealName: '22',
-            userSex: '男',
-            userMobile: '222',
-            userEmail: '222',
-            isLock: 'N',
-            deptId: 1,
-            deptName: 'xxxx',
-            roleId: 1
-          },
-          {
-            addUser: null,
-            editUser: null,
-            addTime: 1526448593000,
-            editTime: 1526448593000,
-            userId: 58,
-            systemNo: null,
-            userName: '1',
-            userPassword: 'e10adc3949ba59abbe56e057f20f883e',
-            userRealName: '1',
-            userSex: '女',
-            userMobile: '13607118810',
-            userEmail: '1@qq.com',
-            isLock: 'N',
-            deptId: 1,
-            deptName: 'xxxx',
-            roleId: 1
-          },
-          {
-            addUser: null,
-            editUser: null,
-            addTime: 1526452698000,
-            editTime: 1526520341000,
-            userId: 60,
-            systemNo: null,
-            userName: '222222222',
-            userPassword: 'e10adc3949ba59abbe56e057f20f883e',
-            userRealName: '222222222222',
-            userSex: '男',
-            userMobile: '13607118810',
-            userEmail: '111@qq.com',
-            isLock: 'N',
-            deptId: 1,
-            deptName: 'xxxx',
-            roleId: 1
-          },
-          {
-            addUser: null,
-            editUser: null,
-            addTime: 1526452731000,
-            editTime: 1526452731000,
-            userId: 61,
-            systemNo: null,
-            userName: '33333333333333',
-            userPassword: 'e10adc3949ba59abbe56e057f20f883e',
-            userRealName: '4444444444444444444',
-            userSex: '女',
-            userMobile: '13607118810',
-            userEmail: 'qqq@qq.com',
-            isLock: 'N',
-            deptId: 1,
-            deptName: 'xxxx',
-            roleId: 2
-          },
-          {
-            addUser: null,
-            editUser: null,
-            addTime: 1526452756000,
-            editTime: 1527128981000,
-            userId: 62,
-            systemNo: null,
-            userName: '211111111',
-            userPassword: 'e10adc3949ba59abbe56e057f20f883e',
-            userRealName: '21111111111',
-            userSex: '男',
-            userMobile: '13601478451',
-            userEmail: '222222@qq.com',
-            isLock: 'N',
-            deptId: 17,
-            deptName: 'v',
-            roleId: 2
-          }
-        ]
-      }
-      this.loading = false
-      this.userData = res.data
-      // 分页赋值
-      this.pageparm.currentPage = this.formInline.page
-      this.pageparm.pageSize = this.formInline.limit
-      this.pageparm.total = res.count
-      // 模拟数据结束
-
-      /***
-       * 调用接口，注释上面模拟数据 取消下面注释
-       */
       // 获取用户列表
-      // userList(parameter).then(res => {
-      //   this.loading = false
-      //   if (res.success == false) {
-      //     this.$message({
-      //       type: 'info',
-      //       message: res.msg
-      //     })
-      //   } else {
-      //     this.userData = res.data
-      //     // 分页赋值
-      //     this.pageparm.currentPage = this.formInline.page
-      //     this.pageparm.pageSize = this.formInline.limit
-      //     this.pageparm.total = res.count
-      //   }
-      // })
+      userList(parameter).then(res => {
+        this.loading = false
+        if (res.success == false) {
+          this.$message({
+            type: 'info',
+            message: res.msg
+          })
+        } else {
+          this.userData = res.data.list
+          // 分页赋值
+          this.pageparm.currentPage = res.data.total
+          this.pageparm.pageSize = 10
+          this.pageparm.total = res.data.total
+        }
+      })
     },
     // 分页插件事件
     callFather(parm) {
@@ -489,7 +290,7 @@ export default {
       this.getdata(this.formInline)
     },
     // 修改type
-    editType: function(index, row) {
+    editType: function (index, row) {
       this.loading = true
       let parm = {
         lock: '',
@@ -521,7 +322,7 @@ export default {
       })
     },
     //显示编辑界面
-    handleEdit: function(index, row) {
+    handleEdit: function (index, row) {
       this.editFormVisible = true
       if (row != undefined && row != 'undefined') {
         this.title = '修改用户'
@@ -576,7 +377,7 @@ export default {
       })
     },
     // 显示部门设置
-    handleunit: function(index, row) {
+    handleunit: function (index, row) {
       this.unitAccessshow = true
       let parms = 0
       UserDeptdeptTree(parms)
@@ -723,7 +524,7 @@ export default {
         })
     },
     // 数据权限
-    dataAccess: function(index, row) {
+    dataAccess: function (index, row) {
       this.dataAccessshow = true
       this.saveroleId = row.userId
       UserDeptTree(row.userId)
@@ -899,9 +700,9 @@ export default {
 .user-search {
   margin-top: 20px;
 }
+
 .userRole {
   width: 100%;
 }
 </style>
 
- 
