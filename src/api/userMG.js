@@ -121,6 +121,10 @@ export const deptList = (params) => {
 export const goodsAdd = (params) => {
   return req("post", "/api/goods/add", params)
 };
+// 商品管理-修改商品
+export const goodsAEdit = (params) => {
+  return req("post", "/api/goods/edit", params)
+};
 // 商品管理-新增商品
 export const deptSave = (params) => {
   return req("post", "/api/Dept/save", params)
@@ -128,6 +132,10 @@ export const deptSave = (params) => {
 // 商品管理-删除商品
 export const deptDelete = (params) => {
   return axios.get("/api/goods/delete?id=" + params + "&token=" + localStorage.getItem('logintoken')).then(res => res.data)
+};
+// 商品管理-商品详情
+export const goodsDetail = (params) => {
+  return axios.get("/api/goods/detail?id=" + params + "&token=" + localStorage.getItem('logintoken')).then(res => res.data)
 };
 export const goodsDeleteBatch = (params) => {
   return doPostJSON("/api/goods/deleteBatch", params)

@@ -42,10 +42,9 @@
       <el-table-column align="center" label="库存状态" min-width="100">
         <template slot-scope="scope">
           <div>
-            999863 <br>
-            已审核 <br>
-            上架 <br>
-            默认展示 <br>
+            库存数量： {{ scope.row.stores }} <br>
+            预警库存水位线： {{ scope.row.storeAlertNum }} <br>
+            商品状态： {{ scope.row.statusStr}}
           </div>
         </template>
       </el-table-column>
@@ -216,18 +215,10 @@ export default {
     },
     //显示编辑界面
     handleEdit: function (index, row) {
-      this.editFormVisible = true
-      if (row != undefined && row != 'undefined') {
-        this.title = '修改'
-        this.editForm.deptId = row.deptId
-        this.editForm.deptName = row.deptName
-        this.editForm.deptNo = row.deptNo
-      } else {
-        this.title = '添加'
-        this.editForm.deptId = ''
-        this.editForm.deptName = ''
-        this.editForm.deptNo = ''
-      }
+      this.$router.push({
+        path: '/goods/goodsAdd',
+        query: {id: row.id}
+      })
     },
     // 编辑、增加页面保存方法
     submitForm(editData) {
@@ -312,7 +303,7 @@ export default {
       })
         .then(() => {
 
-          const params = { "ids": this.tableSelectIds };
+          const params = {"ids": this.tableSelectIds};
           console.info(params)
           goodsDeleteBatch(params).then(res => {
             if (res.code == 0) {
@@ -321,7 +312,7 @@ export default {
                 message: '商品已删除!'
               })
               this.getdata(this.formInline)
-            }else {
+            } else {
               this.$message({
                 type: 'info',
                 message: res.msg

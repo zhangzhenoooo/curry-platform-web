@@ -12,7 +12,8 @@
     <!-- 主体内容 -->
     <el-row>
       <!-- title -->
-      <div class="modt-box">新增商品</div>
+      <div class="modt-box" v-if="form.id === ''">新增商品</div>
+      <div class="modt-box" v-else>修改商品</div>
       <!--      left -->
       <el-col :span="16">
 
@@ -132,6 +133,7 @@
                   <el-col :span="12">
                     <div class="grid-content bg-purple">
                       <el-form-item label="展示图片:" prop="pic">
+                        <img class="showimg" :src="form.pic" width="100px" border="1px" @click="zoomImage" v-if="form.pic">
                         <el-input size="small" style="visibility: hidden;" v-model="form.pic"></el-input>
                         <input size="small" type="file" @change="uploadGoodsFile"/>
                       </el-form-item>
@@ -247,6 +249,7 @@
         </el-form>
       </el-col>
       <el-col :span="6" style="border-left: 1px ">
+        <div style="color: red" >*修改时需重新选择规则*</div>
         <el-button size="small" type="primary" @click="addProperty">增加规格</el-button>
         <br>
         <el-card class="box-card" shadow="always">
@@ -258,8 +261,8 @@
                     element-loading-text="拼命加载中" style="width: 100%;">
             <el-table-column type="index" align="center" label="序号"></el-table-column>
             <el-table-column align="center" prop="label" label="规格"></el-table-column>
-<!--            <el-table-column align="center" prop="propIds" label="propIds"></el-table-column>-->
-<!--            <el-table-column align="center" prop="key" label="key"></el-table-column>-->
+            <!--            <el-table-column align="center" prop="propIds" label="propIds"></el-table-column>-->
+            <!--            <el-table-column align="center" prop="key" label="key"></el-table-column>-->
             <el-table-column align="center" label="操作" min-width="30">
               <template slot-scope="scope">
                 <el-button size="mini" type="danger" @click="deleteSelected(scope.$index, scope.row)">删除</el-button>
@@ -333,7 +336,7 @@ import {
   goodsPropretyTree,
   categoryList,
   goodsAdd,
-  ModuleGet,
+  goodsDetail,
   ModuleDelete
 } from '../../api/userMG';
 import axios from 'axios';
@@ -341,6 +344,7 @@ import axios from 'axios';
 export default {
   data() {
     return {
+      propertyTable: null,
       propertyTableMap: new Map(),
       selectedGoodsPropertyMap: new Map(),
       selectedValue: '',
@@ -353,6 +357,7 @@ export default {
         label: 'name'
       },
       form: {
+        id: '',
         properties: [],
         shopId: 0,
         categoryId: '',
@@ -360,10 +365,10 @@ export default {
         name: '',
         subName: '',
         paixu: 0,
-        recommendStatus: 1,
-        hidden: 1,
-        afterSale: '',
-        status: 0,
+        recommendStatus: '1',
+        hidden: '1',
+        afterSale: '0',
+        status: '0',
         content: '',
         unit: '份',
         originalPrice: 0,
@@ -402,37 +407,14 @@ export default {
    */
 
   created() {
-
     this.getdata()
     this.getmenu()
     this.getGoodsPropertyTree()
-  },
-
-  emptyGoodsForm() {
-    this.form = {
-      shopId: 0,
-      categoryId: '',
-      moduleName: '',
-      name: '',
-      subName: '',
-      paixu: 0,
-      recommendStatus: 1,
-      hidden: 1,
-      afterSale: '',
-      status: 0,
-      content: '',
-      unit: '份',
-      originalPrice: 0,
-      minPrice: 0,
-      tax: 0,
-      minScore: 0,
-      gotScore: 0,
-      minBuyNumber: 1,
-      stores: 1000,
-      storeAlertNum: 20,
-      pic: ''
+    if (this.$route.query.id) {
+      this.getGoodsDetail(this.$route.query.id)
     }
   },
+
 
   /**
    * 里面的方法只有被调用才会执行
@@ -525,7 +507,31 @@ export default {
           this.$message.error('菜单管理列表失败，请稍后再试！')
         })
     },
-
+    emptyGoodsForm() {
+      this.form = {
+        shopId: 0,
+        categoryId: '',
+        moduleName: '',
+        name: '',
+        subName: '',
+        paixu: 0,
+        recommendStatus: '1',
+        hidden: '1',
+        afterSale: '0',
+        status: '0',
+        content: '',
+        unit: '份',
+        originalPrice: 0,
+        minPrice: 0,
+        tax: 0,
+        minScore: 0,
+        gotScore: 0,
+        minBuyNumber: 1,
+        stores: 1000,
+        storeAlertNum: 20,
+        pic: ''
+      }
+    },
 
     // 获取父级菜单
     getmenu() {
@@ -561,10 +567,10 @@ export default {
         if (valid) {
           goodsAdd(this.form)
             .then(res => {
-              this.$message.error('新增成功')
+              this.$message.error('操作成功')
             })
             .catch(err => {
-              this.$message.error('菜单管理列表保存失败，请稍后再试！')
+              this.$message.error('操作失败，请稍后再试！')
             })
         } else {
           return false
@@ -581,10 +587,10 @@ export default {
         .then(res => {
           this.getdata()
           this.getmenu()
-          this.$message.info('菜单管理列表删除成功！')
+          this.$message.info('操作成功！')
         })
         .catch(err => {
-          this.$message.error('菜单管理列表删除失败，请稍后再试！')
+          this.$message.error('操作失败，请稍后再试！')
         })
     },
     uploadGoodsFile() {
@@ -608,7 +614,7 @@ export default {
           this.propretyTree = res.data
         }
 
-      }).error(error => {
+      }).catch(err => {
       })
     },
     // 关闭编辑、增加弹出框
@@ -622,9 +628,9 @@ export default {
     doAddProperty() {
       let array = this.mapToArray(this.selectedGoodsPropertyMap);
       debugger
-      const obj = {label: '', key: 0,propIds: ''}
+      const obj = {label: '', key: 0, propIds: ''}
       let key = 0;
-      let lab  = '';
+      let lab = '';
       let ids = '';
       for (let arrayElement of array) {
         key = key + arrayElement.id
@@ -655,6 +661,20 @@ export default {
     deleteSelected(index, row) {
       console.info('prodId=' + row.key)
       this.propertyTableMap.delete(row.key)
+    },
+    getGoodsDetail(id) {
+      goodsDetail(id).then(res => {
+        this.form = res.data
+      }).catch(err => {
+      })
+    },
+    zoomImage() {
+      let imgElement = this.$el.querySelector('.showimg');  // 获取图片元素
+      if (imgElement.classList.contains('zoomed')) {  // 如果图片已经放大，则缩小它
+        imgElement.classList.remove('zoomed');
+      } else {  // 如果图片未放大，则放大它
+        imgElement.classList.add('zoomed');
+      }
     },
 
   }
@@ -703,6 +723,13 @@ export default {
 
 .selectw {
   width: 100%;
+}
+
+.zoomed {
+  position: absolute;
+  width: 500px; /* 放大后的宽度 */
+  height: auto;
+  z-index: 10;
 }
 </style>
 

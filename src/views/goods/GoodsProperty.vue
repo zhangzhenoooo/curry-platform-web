@@ -211,7 +211,7 @@ export default {
           this.listLab();
           this.$message({type: 'success', message: '删除成功！'})
         }
-      }).error(erroer => {
+      }).catch(err => {
         this.$message.error('删除失败，请稍后再试！')
       })
     },
