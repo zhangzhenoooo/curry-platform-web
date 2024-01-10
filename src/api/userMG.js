@@ -22,8 +22,8 @@ export const userList = (params) => {
   return req("post", "/api/User/list", params)
 };
 // 用户管理-保存（添加编辑）
-export const userSave = (params) => {
-  return req("post", "/api/User/save", params)
+export const userUpdate = (params) => {
+  return req("post", "/api/User/update", params)
 };
 // 用户管理-删除用户
 export const userDelete = (params) => {
@@ -35,7 +35,7 @@ export const userPwd = (params) => {
 };
 // 用户管理-修改状态
 export const userLock = (params) => {
-  return axios.get("/api/User/lock?userId=" + params.userId + "&lock=" + params.lock + "&token=" + localStorage.getItem('logintoken'))
+  return axios.get("/api/User/lock?userId=" + params.userId + "&status=" + params.status + "&token=" + localStorage.getItem('logintoken'))
 };
 // 用户管理-数据权限
 export const UserDeptTree = (params) => {

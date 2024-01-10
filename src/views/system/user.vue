@@ -38,28 +38,22 @@
       </el-table-column>
       <el-table-column align="center" sortable prop="phone" label="手机号" width="120">
       </el-table-column>
-      <el-table-column align="center" sortable prop="status" label="状态" width="120">
-      </el-table-column>
       <el-table-column align="center" sortable prop="createTime" label="创建时间" min-width="120">
         <template slot-scope="scope">
           <div>{{ scope.row.createTime|timestampToTime }}</div>
         </template>
       </el-table-column>
-      <el-table-column align="center" sortable prop="isLock" label="状态" min-width="50">
+      <el-table-column align="center" sortable prop="status" label="状态（是否禁用|删除）" min-width="120">
         <template slot-scope="scope">
-          <el-switch v-model="scope.row.isLock=='N'?nshow:fshow" active-color="#13ce66" inactive-color="#ff4949"
+          <el-switch v-model="scope.row.status!='0'?nshow:fshow" active-color="#13ce66" inactive-color="#ff4949"
                      @change="editType(scope.$index, scope.row)">
           </el-switch>
         </template>
       </el-table-column>
       <el-table-column label="操作" min-width="300">
         <template slot-scope="scope">
-          <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+          <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">修改</el-button>
           <el-button size="mini" type="danger" @click="deleteUser(scope.$index, scope.row)">删除</el-button>
-          <el-button size="mini" type="success" @click="resetpwd(scope.$index, scope.row)">重置密码</el-button>
-          <el-button size="mini" type="success" @click="dataAccess(scope.$index, scope.row)">数据权限</el-button>
-          <el-button size="mini" type="success" @click="offlineUser(scope.$index, scope.row)">下线</el-button>
-          <el-button size="mini" type="success" @click="refreshCache(scope.$index, scope.row)">刷新缓存</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -71,24 +65,11 @@
         <el-form-item label="用户名" prop="userName">
           <el-input size="small" v-model="editForm.userName" auto-complete="off" placeholder="请输入用户名"></el-input>
         </el-form-item>
-        <el-form-item label="姓名" prop="userRealName">
-          <el-input size="small" v-model="editForm.userRealName" auto-complete="off" placeholder="请输入姓名"></el-input>
+        <el-form-item label="昵称" prop="nick">
+          <el-input size="small" v-model="editForm.nick" auto-complete="off" placeholder="请输入昵称"></el-input>
         </el-form-item>
-        <el-form-item label="角色" prop="roleId">
-          <el-select size="small" v-model="editForm.roleId" placeholder="请选择" class="userRole">
-            <el-option label="公司管理员" value="1"></el-option>
-            <el-option label="普通用户" value="2"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="手机号" prop="userMobile">
-          <el-input size="small" v-model="editForm.userMobile" placeholder="请输入手机号"></el-input>
-        </el-form-item>
-        <el-form-item label="邮件" prop="userEmail">
-          <el-input size="small" v-model="editForm.userEmail" placeholder="请输入邮箱地址"></el-input>
-        </el-form-item>
-        <el-form-item label="性别" prop="userSex">
-          <el-radio v-model="editForm.userSex" label="男">男</el-radio>
-          <el-radio v-model="editForm.userSex" label="女">女</el-radio>
+        <el-form-item label="头像" prop="avatarUrl">
+          <img class="showimg" :src="editForm.avatarUrl" width="100px" border="1px" v-if="editForm.avatarUrl">
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -124,7 +105,7 @@
 // 导入请求方法
 import {
   userList,
-  userSave,
+  userUpdate,
   userDelete,
   userPwd,
   userExpireToken,
@@ -152,6 +133,8 @@ export default {
         userId: '',
         userName: '',
         userRealName: '',
+        avatarUrl: '',
+        nick: '',
         roleId: '',
         userMobile: '',
         userEmail: '',
@@ -265,7 +248,7 @@ export default {
       // 获取用户列表
       userList(parameter).then(res => {
         this.loading = false
-        if (res.success == false) {
+        if (res.code != 0) {
           this.$message({
             type: 'info',
             message: res.msg
@@ -293,16 +276,16 @@ export default {
     editType: function (index, row) {
       this.loading = true
       let parm = {
-        lock: '',
-        userId: '',
+        status: row.status,
+        userId: row.userId,
         token: localStorage.getItem('logintoken')
       }
       parm.userId = row.userId
-      let lock = row.isLock
-      if (lock == 'N') {
-        parm.lock = 'Y'
+      let status = row.status
+      if (status == 0) {
+        parm.status = 1
       } else {
-        parm.lock = 'N'
+        parm.status = 0
       }
       // 修改状态
       userLock(parm).then(res => {
@@ -328,20 +311,15 @@ export default {
         this.title = '修改用户'
         this.editForm.userId = row.userId
         this.editForm.userName = row.userName
-        this.editForm.userRealName = row.userRealName
-        this.editForm.roleId = row.roleId
-        this.editForm.userMobile = row.userMobile
-        this.editForm.userEmail = row.userEmail
-        this.editForm.userSex = row.userSex
+        this.editForm.nick = row.nick
+        this.editForm.avatarUrl = row.avatarUrl
+
       } else {
         this.title = '添加用户'
         this.editForm.userId = ''
         this.editForm.userName = ''
-        this.editForm.userRealName = ''
-        this.editForm.roleId = ''
-        this.editForm.userMobile = ''
-        this.editForm.userEmail = ''
-        this.editForm.userSex = ''
+        this.editForm.nick = ''
+        this.editForm.avatarUrl = ''
       }
     },
     // 编辑、添加提交方法
@@ -349,11 +327,11 @@ export default {
       this.$refs[editData].validate(valid => {
         if (valid) {
           // 请求方法
-          userSave(this.editForm)
+          userUpdate(this.editForm)
             .then(res => {
               this.editFormVisible = false
               this.loading = false
-              if (res.success) {
+              if (res.code == 0) {
                 this.getdata(this.formInline)
                 this.$message({
                   type: 'success',
@@ -362,7 +340,7 @@ export default {
               } else {
                 this.$message({
                   type: 'info',
-                  message: res.msg
+                  message: res.message
                 })
               }
             })
@@ -460,9 +438,9 @@ export default {
       })
         .then(() => {
           // 删除
-          userDelete(row.id)
+          userDelete(row.userId)
             .then(res => {
-              if (res.success) {
+              if (res.code == 0) {
                 this.$message({
                   type: 'success',
                   message: '数据已删除!'

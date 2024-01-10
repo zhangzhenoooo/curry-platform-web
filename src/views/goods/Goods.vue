@@ -178,18 +178,14 @@ export default {
     // 获取公司列表
     getdata(parameter) {
       this.loading = true
-
-
-      /***
-       * 调用接口，注释上面模拟数据 取消下面注释
-       */
       deptList(parameter)
         .then(res => {
           this.loading = false
-          if (res.success == false) {
+
+          if (res.code != 0) {
             this.$message({
               type: 'info',
-              message: res.msg
+              message: res.message
             })
           } else {
             this.listData = res.data.list

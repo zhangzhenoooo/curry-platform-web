@@ -10,9 +10,9 @@
     <el-input readonly style="visibility: hidden;"></el-input>
 
     <!--    顶部按钮-->
-    <el-button size="small" type="primary" @click="addTab()">添加</el-button>
-    <el-button size="small" type="primary" @click="editTab()">编辑</el-button>
-    <el-button size="mini" type="danger" @click="deleteTab()">删除</el-button>
+    <el-button size="small" type="primary" @click="addTab()">添加规格</el-button>
+    <el-button size="small" type="primary" @click="editTab()">编辑规格</el-button>
+    <el-button size="mini" type="danger" @click="deleteTab()">删除当前规格</el-button>
     <!--tab 内容-->
     <el-tabs v-model="activeTab" @tab-click="handleClick">
       <el-tab-pane v-for="(tab, index) in labList" :key="index" :label="tab.name">
@@ -23,20 +23,21 @@
           <el-table-column prop="act" label="操作">
             <template slot-scope="scope">
               <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-              <el-button size="mini" type="danger" @click="deleteUser(scope.$index, scope.row)">删除</el-button>
+              <el-button size="mini" type="danger" @click="deletePropety(scope.row)">删除</el-button>
             </template>
           </el-table-column>
 
         </el-table>
+
+        <el-button size="small" type="primary" @click="addItem(tab)">添加子属性</el-button>
       </el-tab-pane>
     </el-tabs>
-    <el-button size="small" type="primary" @click="addItem('form')">添加子属性</el-button>
 
     <!-- 编辑界面 -->
 
     <el-dialog :title="title" :visible.sync="editFormVisible" width="30%" @click="closeDialog">
       <el-form label-width="150px" :model="editForm" :rules="rules" ref="editForm">
-        <el-form-item label="属性标识(新增可不填)" prop="id">
+        <el-form-item label="主键" prop="id">
           <el-input size="small" readyonly v-model="editForm.id" auto-complete="off" placeholder="属性id"></el-input>
         </el-form-item>
         <el-form-item label="属性名称" prop="name">
@@ -135,18 +136,29 @@ export default {
         this.activeTab = tab.label; // 更新激活的标签页
       });
     },
+    deletePropety(row){
+      goodsPropretyDelete(row.id).then(res => {
+        if (res.code == 0) {
+          this.currentProptreyId = 0;
+          this.listLab();
+          this.$message({type: 'success', message: '删除成功！'})
+        }
+      }).catch(err => {
+        this.$message.error('删除失败，请稍后再试！')
+      })
+    },
     handleEdit(index, row) {
       this.editFormVisible = true
       if (row != undefined && row != 'undefined') {
         this.title = '修改'
         this.editForm.id = row.id
         this.editForm.name = row.name
-        this.editForm.parentPropertyId = row.parentPropertyId
+        this.editForm.parentPropertyId = row.propertyId
       } else {
         this.title = '添加'
         this.editForm.id = ''
         this.editForm.name = ''
-        this.editForm.id = row.parentPropertyId
+        this.editForm.id = row.propertyId
       }
     },
     // 编辑、增加页面保存方法
@@ -194,7 +206,6 @@ export default {
 
     },
     editTab() {
-
       const row = {
         parentPropertyId: 0,
         name: this.labList[this.currentProptreyId].name,
@@ -203,10 +214,8 @@ export default {
       this.handleEdit(null, row);
     },
     deleteTab() {
-
       goodsPropretyDelete(this.labList[this.currentProptreyId].id).then(res => {
         if (res.code == 0) {
-
           this.currentProptreyId = 0;
           this.listLab();
           this.$message({type: 'success', message: '删除成功！'})
@@ -215,10 +224,12 @@ export default {
         this.$message.error('删除失败，请稍后再试！')
       })
     },
-    addItem() {
-      const param = {
-        parentPropertyId: 0,
+    addItem(row) {
+       const param = {
+        propertyId: row.id,
+         id: null
       }
+      this.handleEdit(null, param);
     },
     // 关闭编辑、增加弹出框
     closeDialog() {
