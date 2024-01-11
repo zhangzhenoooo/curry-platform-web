@@ -180,7 +180,7 @@ export const goodsPropretyTree = () => {
 
 
 export const categoryDeleteBatch = (params) => {
-  return doPostJSON( "/api/goods/category/deleteBatch", params)
+  return doPostJSON("/api/goods/category/deleteBatch", params)
 };
 
 /**
@@ -223,8 +223,62 @@ export const RolePermission = (params) => {
   return req("post", "/api/RolePermission/save", params)
 };
 
-
-export const uploadFile = (params) => {
-  return req("post", "/api/file/upload", params)
+// 通知管理 notice
+// 通知管理-获取用户列表
+export const noticeList = (params) => {
+  return req("post", "/api/notice/list", params)
+};
+// 通知管理-编辑
+export const noticeUpdate = (params) => {
+  return req("post", "/api/notice/update", params)
+};
+// 通知管理-保存|编辑
+export const noticeAdd = (params) => {
+  return req("post", "/api/notice/add", params)
+};
+// 通知管理-删除
+export const noticeDelete = (params) => {
+  return axios.delete("/api/notice/delete?id=" + params + "&token=" + localStorage.getItem('logintoken')).then(res => res.data)
+};
+// 通知管理-删除
+export const noticeChangeStatus = (params) => {
+  return axios.get("/api/notice/changeStatus?id=" + params.id + "&isShow=" + params.isShow + "&token=" + localStorage.getItem('logintoken')).then(res => res.data)
+};
+// 通知管理-批量删除
+export const noticeDeleteBatch = (params) => {
+  return axios.delete("/api/notice/delete?ids=" + params + "&token=" + localStorage.getItem('logintoken')).then(res => res.data)
+};
+export const noticeDetail = (params) => {
+  return axios.get("/api/notice/detail?&id=" + params).then(res => res.data)
 };
 
+
+
+// 通知管理 banner
+// 通知管理-获取用户列表
+export const bannerList = (params) => {
+  return req("post", "/api/banner/list", params)
+};
+// 通知管理-编辑
+export const bannerUpdate = (params) => {
+  return req("post", "/api/banner/update", params)
+};
+// 通知管理-保存|编辑
+export const bannerAdd = (params) => {
+  return req("post", "/api/banner/add", params)
+};
+// 通知管理-删除
+export const bannerDelete = (params) => {
+  return axios.delete("/api/banner/delete?id=" + params + "&token=" + localStorage.getItem('logintoken')).then(res => res.data)
+};
+// 通知管理-删除
+export const bannerChangeStatus = (params) => {
+  return axios.get("/api/banner/changeStatus?id=" + params.id + "&status=" + params.status + "&token=" + localStorage.getItem('logintoken')).then(res => res.data)
+};
+// 通知管理-批量删除
+export const bannerDeleteBatch = (params) => {
+  return axios.delete("/api/banner/delete?ids=" + params + "&token=" + localStorage.getItem('logintoken')).then(res => res.data)
+};
+export const bannerDetail = (params) => {
+  return axios.get("/api/banner/detail?&id=" + params).then(res => res.data)
+};

@@ -601,7 +601,7 @@ export default {
       axios.post("/api/file/upload", formData, {
         headers: {'Content-Type': 'multipart/form-data'}
       }).then(res => {
-        this.form.pic = res.data.data
+        this.form.pic = res.data.data.stageUrl
         console.log(res)
       }).catch(error => {
         console.error(error)

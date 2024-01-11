@@ -43,6 +43,11 @@ import Dept from '@/views/system/Dept';
 import Variable from '@/views/system/Variable';
 // 权限管理
 import Permission from '@/views/system/Permission';
+// 公告管理
+import Notice from '@/views/system/notice';
+// banner管理
+import Banner from '@/views/system/banner';
+
 /**
  * 支付管理
  */
@@ -108,7 +113,7 @@ export default new Router({
         meta: {
           requireAuth: true
         }
-      },{
+      }, {
         path: '/goods/GoodsProperty',
         name: '规格尺寸',
         hidden: true,
@@ -197,6 +202,20 @@ export default new Router({
         path: '/druid/login',
         name: '监控查询',
         component: druidLogin,
+        meta: {
+          requireAuth: true
+        }
+      }, {
+        path: '/system/notice',
+        name: '公告管理',
+        component: Notice,
+        meta: {
+          requireAuth: true
+        }
+      }, {
+        path: '/system/banner',
+        name: 'Banner管理',
+        component: Banner,
         meta: {
           requireAuth: true
         }
